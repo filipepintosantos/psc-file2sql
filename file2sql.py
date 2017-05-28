@@ -1,46 +1,45 @@
 # file2sql
 
 """
-Programa para ler um ficheiro de texto e carregar numa tabela linha a linha
-
-OK Ler o ficheiro no arg1 linha-a-linha
-OK Remover carateres perigosos
-OK Voltar a gravar o ficheiro
-Ler ficheiro de parametros para ligação ao SQL
-Integrar ficheiro no SQL ou
-Executar SQLCMD para integrar o ficheiro
+Program to read text file and insert each line in a SQL Server database table as one column
 
 @Author: Filipe Santos
 @Created: 2017-05-27
+@LastUpdate: 2017-05-28
 
-@Version: 0.2 b
+@Version: 1.0
 @Copyright: PSC - Pinto Santos Consultores - 2017
 
 """
 
 import sys
-#import subprocess
+import imp
+import pypyodbc
 
-#
-# TEST AREA
-#
-
-#
-# END OF TEST AREA
-#
-
-sqltable = "TABELA"
-sqlcolumn = "COLUNA"
-
+# Se o argv[1] não estiver preenchido não faz nada
 if len(sys.argv) > 1:
-    original_file = sys.argv[1]
-    tempfile = open("tempfile.sql", 'w')
-    file_lines = open(original_file).read().splitlines()
-    with open("tempfile.sql", 'w') as tempfile:
-        for idx, file_line in enumerate(file_lines):
-            sqlvalue = file_line.replace("'", " ")
-            new_file_line="insert into %s (%s) values ('%s');\n" % (sqltable, sqlcolumn, sqlvalue)
-            tempfile.write(new_file_line)
-
+    # ler o ficheiro de parametros file2sql.ini para carregar diversas variaveis
+    with open("file2sql.ini", 'r') as parm_file:
+        parm = imp.load_source('data', '', parm_file)
+        if parm.sql_server == ".":
+            parm.sql_server = "localhost"
+        # argv[1] é o nome do ficheiro a importar para o sql
+        original_file = sys.argv[1]
+        file_lines = open(original_file).read().splitlines()
+        with open("query.sql", 'w') as query_file:
+            for idx, file_line in enumerate(file_lines):
+                sqlvalue = file_line.replace("'", " ")
+                new_file_line = "insert into %s (%s) values ('%s');\n" % (parm.sql_table, parm.sql_column, sqlvalue)
+                query_file.write(new_file_line)
+        if parm.sql_auth == "windows":
+            conn_str = 'Driver={SQL Server Native Client 11.0}; Server=%s; Database=%s; Trusted_Connection=yes;' % (parm.sql_server, parm.sql_catalog)
+        else:
+            conn_str = 'Driver={SQL Server Native Client 11.0}; Server=%s; Database=%s; uid=%s; pwd=%s' % (parm.sql_server, parm.sql_catalog, parm.sql_user, parm.sql_password)
+        connection = pypyodbc.connect(conn_str)
+        query_lines = open("query.sql", 'r').read().splitlines()
+        for idx, query_line in enumerate(query_lines):
+            connection.cursor().execute(query_line)
+        connection.commit()
+        connection.close()
 else:
-    print("argument 1 is empty.")
+    print("Argument 1 is empty. Exited")

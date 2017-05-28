@@ -1,0 +1,9 @@
+insert into TestTable1 (full_row) values ('sql_server = "."');
+insert into TestTable1 (full_row) values ('sql_catalog = "DBforTests"');
+insert into TestTable1 (full_row) values ('sql_auth = "native"');
+insert into TestTable1 (full_row) values ('sql_user = "sa"');
+insert into TestTable1 (full_row) values ('sql_password = "sa_Passw0rd"');
+insert into TestTable1 (full_row) values ('sql_table = "TestTable1"');
+insert into TestTable1 (full_row) values ('sql_column = "full_row"');
+insert into TestTable1 (full_row) values ('path_in = "."');
+insert into TestTable1 (full_row) values ('path_out = "."');

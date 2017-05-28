@@ -1,8 +1,0 @@
-insert into TABELA (COLUNA) values ('server:.')
-insert into TABELA (COLUNA) values ('catalog:')
-insert into TABELA (COLUNA) values ('user:')
-insert into TABELA (COLUNA) values ('password:')
-insert into TABELA (COLUNA) values ('table:')
-insert into TABELA (COLUNA) values ('field:')
-insert into TABELA (COLUNA) values ('path-in:')
-insert into TABELA (COLUNA) values ('path-out:')
