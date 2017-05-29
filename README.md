@@ -1,4 +1,4 @@
-# psc-file2sql v1.0
+# psc-file2sql v1.0.1 - 2017-05-29
 Pinto Santos Consultores - File2SQL
 
-Programa para ler um ficheiro de texto e carregar numa tabela de SQL Server linha a linha
+Program to read text file and insert each line in a SQL Server database table as one column
