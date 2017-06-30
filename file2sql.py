@@ -8,9 +8,9 @@ logging to everything
 
 @Author: Filipe Santos
 @Created: 2017-05-27
-@LastUpdate: 2017-05-29
+@LastUpdate: 2017-06-30
 
-@Version: 1.0.1
+@Version: 1.0.2
 @Copyright: PSC - Pinto Santos Consultores - 2017
 
 """
@@ -46,7 +46,12 @@ try:
         with open("file2sql.sql", 'w') as query_file:
             for idx, file_line in enumerate(file_lines):
                 logger.debug("Preparing line %s.", idx)
-                sqlvalue = file_line.replace("'", " ")
+                if parm.sql_filename == "INCLUDE":
+                    logger.info("Include file name in column line value.")
+                    sqlvalue = original_file + ":" + file_line.replace("'", " ")
+                else:
+                    logger.info("Don't include file name in column line value.")
+                    sqlvalue = file_line.replace("'", " ")
                 new_file_line = "insert into %s (%s) values ('%s');\n" % (parm.sql_table, parm.sql_column, sqlvalue)
                 query_file.write(new_file_line)
         conn_str = 'Driver={SQL Server Native Client 11.0}; Server=%s; Database=%s;' % (parm.sql_server, parm.sql_catalog)
