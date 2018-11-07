@@ -8,16 +8,17 @@ logging to everything
 
 @Author: Filipe Santos
 @Created: 2017-05-27
-@LastUpdate: 2017-06-30
+@LastUpdate: 2018-11-07
 
-@Version: 1.0.2
-@Copyright: PSC - Pinto Santos Consultores - 2017
+@Version: 1.1.0
+@Copyright: PSC - Pinto Santos Consultores - (2017, 2018)
 
 """
 
 import logging
 import sys
 import imp
+import importlib
 import pypyodbc
 
 logging.basicConfig(filename='file2sql.log', format='%(asctime)s : %(levelname)-8s : %(name)s : %(message)s', level=logging.INFO)
@@ -27,13 +28,13 @@ logger.info("file2sql start program log.")
 logger.info("Logging level set to INFO.")
 
 if len(sys.argv) < 1:
-    logger.warning("Argument 1 is empty. Exited")
+    logger.info("Argument 1 is empty. Exited")
     sys.exit()
 
 try:
     logger.info("Opening ini file to read parameters.")
     with open("file2sql.ini", 'r') as parm_file:
-        parm = imp.load_source('data', '', parm_file)
+        parm = imp.load_source('data', '', parm_file) #imp is deprecated
         if parm.log_level != "INFO":
             logger.setLevel(logging.getLevelName(parm.log_level))
             logger.info("Logging level changed to %s.", parm.log_level)
@@ -54,7 +55,7 @@ try:
                     sqlvalue = file_line.replace("'", " ")
                 new_file_line = "insert into %s (%s) values ('%s');\n" % (parm.sql_table, parm.sql_column, sqlvalue)
                 query_file.write(new_file_line)
-        conn_str = 'Driver={SQL Server Native Client 11.0}; Server=%s; Database=%s;' % (parm.sql_server, parm.sql_catalog)
+        conn_str = 'Driver=%s; Server=%s; Database=%s;' % (parm.sql_driver, parm.sql_server, parm.sql_catalog)
         if parm.sql_auth == "windows":
             conn_str += ' Trusted_Connection=yes;'
         else:

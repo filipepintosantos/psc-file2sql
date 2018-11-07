@@ -1,0 +1,4 @@
+# ignore files and folders on git repository
+/__pycache__/
+/build/
+/venv/
