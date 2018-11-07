@@ -42,16 +42,18 @@ try:
             parm.sql_server = "localhost"
         original_file = sys.argv[1]
         logger.info("Opening data file: %s", original_file)
-        file_lines = open(original_file).read().splitlines()
+        if parm.sql_filename == "INCLUDE":
+            logger.info("Include file name in column line value.")
+        else:
+            logger.info("Don't include file name in column line value.")
+        file_lines = open(original_file, encoding="ISO-8859-1").read().splitlines()
         logger.info("Creating file with prepared SQL Statements.")
         with open("file2sql.sql", 'w') as query_file:
             for idx, file_line in enumerate(file_lines):
                 logger.debug("Preparing line %s.", idx)
                 if parm.sql_filename == "INCLUDE":
-                    logger.info("Include file name in column line value.")
                     sqlvalue = original_file + ":" + file_line.replace("'", " ")
                 else:
-                    logger.info("Don't include file name in column line value.")
                     sqlvalue = file_line.replace("'", " ")
                 new_file_line = "insert into %s (%s) values ('%s');\n" % (parm.sql_table, parm.sql_column, sqlvalue)
                 query_file.write(new_file_line)
